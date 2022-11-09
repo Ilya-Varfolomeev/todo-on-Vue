@@ -3,19 +3,20 @@ import TodoItem from "./TodoItem.vue";
 
 export default {
   components: { TodoItem },
+
   data() {
     return {
       newTodoText: "",
-      todos: localStorage.getItem("todos")
-        ? JSON.parse(localStorage.getItem("todos"))
-        : [],
+      todos: [],
     };
   },
+
   methods: {
     changeTodosArr(todosArr) {
       this.todos = todosArr;
       localStorage.setItem("todos", JSON.stringify(todosArr));
     },
+
     handleAddTodo() {
       if (this.newTodoText.length < 1) {
         return;
@@ -30,24 +31,12 @@ export default {
       this.changeTodosArr(allTodos);
       this.newTodoText = "";
     },
+
     handleRemoveTodo(todoId) {
       const filteredTodos = this.todos.filter((todo) => todo.id !== todoId);
       this.changeTodosArr(filteredTodos);
     },
-    handleFilterTodos(filter) {
-      switch (filter) {
-        case "all":
-          return (this.todos = JSON.parse(localStorage.getItem("todos")));
-        case "completed":
-          return (this.todos = JSON.parse(localStorage.getItem("todos")).filter(
-            (todo) => todo.isDone
-          ));
-        case "left":
-          return (this.todos = JSON.parse(localStorage.getItem("todos")).filter(
-            (todo) => !todo.isDone
-          ));
-      }
-    },
+
     handleChangeTodoStatus(todoId, value) {
       const filteredTodos = this.todos.map((todo) => {
         if (todo.id === todoId) {
@@ -57,6 +46,28 @@ export default {
       });
       this.changeTodosArr(filteredTodos);
     },
+
+    handleFilterTodos(filter) {
+      const todos = JSON.parse(localStorage.getItem("todos"));
+      switch (filter) {
+        case "all":
+          return (this.todos = todos);
+        case "completed":
+          return (this.todos = todos.filter((todo) => todo.isDone));
+        case "left":
+          return (this.todos = todos.filter((todo) => !todo.isDone));
+      }
+    },
+
+    getTodos() {
+      this.todos = localStorage.getItem("todos")
+        ? JSON.parse(localStorage.getItem("todos"))
+        : [];
+    },
+  },
+
+  mounted() {
+    this.getTodos();
   },
 };
 </script>
