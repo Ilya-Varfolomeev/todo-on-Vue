@@ -1,8 +1,9 @@
 <script>
 import TodoItem from "./TodoItem.vue";
+import TodoFilters from "./TodoFilters.vue";
 
 export default {
-  components: { TodoItem },
+  components: { TodoItem, TodoFilters },
 
   data() {
     return {
@@ -71,16 +72,18 @@ export default {
   },
 };
 </script>
+
 <template>
-  <form v-on:submit.prevent="handleAddTodo">
+  <form v-on:submit.prevent="handleAddTodo" class="todo-list__form">
     <input
       type="text"
       placeholder="Enter a new todo"
       v-model.trim="newTodoText"
+      class="todo-list__add-input"
     />
-    <button>Add</button>
+    <button class="todo-list__button">Add</button>
   </form>
-  <ul>
+  <ul class="todo-list__todos-wrapper">
     <TodoItem
       v-for="todo in todos"
       :key="todo.id"
@@ -90,9 +93,43 @@ export default {
       @check="handleChangeTodoStatus(todo.id, !todo.isDone)"
     />
   </ul>
-  <template v-if="this.todos.length > 0">
-    <button @click="handleFilterTodos('all')">All</button>
-    <button @click="handleFilterTodos('completed')">Completed</button>
-    <button @click="handleFilterTodos('left')">Left</button>
-  </template>
+
+  <div v-if="this.todos.length > 0" class="todo-list__buttons-wrapper">
+    <TodoFilters @filter="handleFilterTodos" />
+  </div>
 </template>
+
+<style scoped>
+.todo-list__form {
+  display: flex;
+  margin-bottom: 15px;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+.todo-list__add-input {
+  padding: 10px;
+  border: 1px solid #ececec;
+  border-radius: 7px;
+  margin-right: 5px;
+  width: 100%;
+}
+.todo-list__todos-wrapper {
+  padding: 0;
+  width: 100%;
+  margin-bottom: 20px;
+}
+.todo-list__button {
+  border: 1px solid #ececec;
+  border-radius: 7px;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.todo-list__buttons-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+</style>
