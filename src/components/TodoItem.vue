@@ -1,6 +1,15 @@
 <script>
 export default {
-  props: ["title", "checked"],
+  props: {
+    title: {
+      type: String,
+      required: true,
+    },
+    checked: {
+      type: Boolean,
+      required: true,
+    },
+  },
   emits: ["remove", "check"],
   data() {
     return {
