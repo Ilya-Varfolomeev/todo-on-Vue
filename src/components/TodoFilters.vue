@@ -1,6 +1,11 @@
 <script>
 export default {
-  emits: ["filter"],
+  emits: {
+    filter: {
+      type: Function,
+      required: true,
+    },
+  },
   methods: {
     handleFilter(settings) {
       console.log("123", settings);
