@@ -8,7 +8,6 @@ export default {
   },
   methods: {
     handleFilter(settings) {
-      console.log("123", settings);
       this.$emit("filter", settings);
     },
   },
