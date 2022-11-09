@@ -28,6 +28,7 @@ export default {
       id="checkbox"
       @click="$emit('check')"
       v-model="this.isChecked"
+      class="todo-item__checkbox"
     />
   </li>
 </template>
@@ -55,5 +56,12 @@ export default {
   margin-right: 10px;
   justify-self: end;
   background: white;
+  cursor: pointer;
+}
+
+.todo-item__checkbox {
+  cursor: pointer;
+  width: 22px;
+  height: 24px;
 }
 </style>
