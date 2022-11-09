@@ -62,7 +62,11 @@ export default {
 </script>
 <template>
   <form v-on:submit.prevent="handleAddTodo">
-    <input type="text" placeholder="Enter a new todo" v-model="newTodoText" />
+    <input
+      type="text"
+      placeholder="Enter a new todo"
+      v-model.trim="newTodoText"
+    />
     <button>Add</button>
   </form>
   <ul>
