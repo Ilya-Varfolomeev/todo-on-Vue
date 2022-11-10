@@ -1,9 +1,10 @@
 <script>
+import CustomInput from "./CustomInput.vue";
 import TodoItem from "./TodoItem.vue";
 import TodoFilters from "./TodoFilters.vue";
 
 export default {
-  components: { TodoItem, TodoFilters },
+  components: { TodoItem, TodoFilters, CustomInput },
 
   data() {
     return {
@@ -83,11 +84,10 @@ export default {
 
 <template>
   <form v-on:submit.prevent="handleAddTodo" class="todo-list__form">
-    <input
-      type="text"
-      placeholder="Enter a new todo"
+    <CustomInput
       v-model.trim="newTodoText"
       class="todo-list__add-input"
+      placeholder="Enter a new todo"
     />
     <button class="todo-list__button">Add</button>
   </form>
