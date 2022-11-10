@@ -12,12 +12,13 @@ export default {
     };
   },
 
-  methods: {
-    changeTodosArr(todosArr) {
-      this.todos = todosArr;
-      localStorage.setItem("todos", JSON.stringify(todosArr));
+  watch: {
+    todos: function () {
+      localStorage.setItem("todos", JSON.stringify(this.todos));
     },
+  },
 
+  methods: {
     handleAddTodo() {
       if (this.newTodoText.length < 1) {
         return;
@@ -28,36 +29,21 @@ export default {
         isDone: false,
         id: Math.floor(Math.random() * 100),
       };
-      const allTodos = [...this.todos, newTodo];
-      this.changeTodosArr(allTodos);
+      this.todos = [...this.todos, newTodo];
       this.newTodoText = "";
     },
 
     handleRemoveTodo(todoId) {
-      const filteredTodos = this.todos.filter((todo) => todo.id !== todoId);
-      this.changeTodosArr(filteredTodos);
+      this.todos = this.todos.filter((todo) => todo.id !== todoId);
     },
 
     handleChangeTodoStatus(todoId, value) {
-      const filteredTodos = this.todos.map((todo) => {
+      this.todos = this.todos.map((todo) => {
         if (todo.id === todoId) {
           return { ...todo, isDone: value };
         }
         return todo;
       });
-      this.changeTodosArr(filteredTodos);
-    },
-
-    handleFilterTodos(filter) {
-      const todos = JSON.parse(localStorage.getItem("todos"));
-      switch (filter) {
-        case "all":
-          return (this.todos = todos);
-        case "completed":
-          return (this.todos = todos.filter((todo) => todo.isDone));
-        case "left":
-          return (this.todos = todos.filter((todo) => !todo.isDone));
-      }
     },
 
     getTodos() {
@@ -65,10 +51,32 @@ export default {
         ? JSON.parse(localStorage.getItem("todos"))
         : [];
     },
+
+    handleFilterTodos(filter) {
+      const todos = JSON.parse(localStorage.getItem("todos"));
+      console.log("filter", filter);
+      switch (filter) {
+        case "all":
+          return todos;
+        case "completed":
+          return todos.filter((todo) => todo.isDone);
+        case "left":
+          return todos.filter((todo) => !todo.isDone);
+        default:
+          return this.todos;
+      }
+    },
   },
 
   mounted() {
     this.getTodos();
+  },
+  // TODO fix filtering todos
+  computed: {
+    filteredTodos() {
+      return this.todos;
+      // return this.handleFilterTodos();
+    },
   },
 };
 </script>
@@ -85,7 +93,7 @@ export default {
   </form>
   <ul class="todo-list__todos-wrapper">
     <TodoItem
-      v-for="todo in todos"
+      v-for="todo in filteredTodos"
       :key="todo.id"
       :title="todo.title"
       :checked="todo.isDone"
@@ -94,7 +102,7 @@ export default {
     />
   </ul>
 
-  <div v-if="this.todos.length > 0" class="todo-list__buttons-wrapper">
+  <div v-if="filteredTodos.length > 0" class="todo-list__buttons-wrapper">
     <TodoFilters @filter="handleFilterTodos" />
   </div>
 </template>
