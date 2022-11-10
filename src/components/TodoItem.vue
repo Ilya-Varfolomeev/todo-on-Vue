@@ -16,6 +16,11 @@ export default {
       isChecked: this.checked,
     };
   },
+  watch: {
+    isChecked: function () {
+      this.$emit("check");
+    },
+  },
 };
 </script>
 
@@ -26,8 +31,7 @@ export default {
     <input
       type="checkbox"
       id="checkbox"
-      @click="$emit('check')"
-      v-model="this.isChecked"
+      v-model="isChecked"
       class="todo-item__checkbox"
     />
   </li>
