@@ -23,11 +23,8 @@ export default {
 
 <template>
   <li class="todo-item">
-    <p class="todo-item__title">{{ this.props.todo.title }}</p>
-    <button
-      @click="$emit('remove', this.props.todo.id)"
-      class="todo-item__remove-button"
-    >
+    <p class="todo-item__title">{{ todo.title }}</p>
+    <button @click="$emit('remove', todo.id)" class="todo-item__remove-button">
       X
     </button>
     <input
