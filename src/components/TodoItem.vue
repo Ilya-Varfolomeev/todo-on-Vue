@@ -1,13 +1,10 @@
 <script>
 export default {
   props: {
-    title: {
-      type: String,
-      required: true,
-    },
-    checked: {
-      type: Boolean,
-      required: true,
+    todo: {
+      id: Number,
+      title: String,
+      isDone: Boolean,
     },
   },
   emits: ["remove", "check"],
@@ -18,7 +15,7 @@ export default {
   },
   watch: {
     isChecked: function () {
-      this.$emit("check");
+      this.$emit("check", this.todo.id, !this.todo.isDone);
     },
   },
 };
@@ -26,8 +23,13 @@ export default {
 
 <template>
   <li class="todo-item">
-    <p class="todo-item__title">{{ title }}</p>
-    <button @click="$emit('remove')" class="todo-item__remove-button">X</button>
+    <p class="todo-item__title">{{ this.props.todo.title }}</p>
+    <button
+      @click="$emit('remove', this.props.todo.id)"
+      class="todo-item__remove-button"
+    >
+      X
+    </button>
     <input
       type="checkbox"
       id="checkbox"

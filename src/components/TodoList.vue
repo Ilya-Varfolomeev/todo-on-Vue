@@ -95,10 +95,9 @@ export default {
     <TodoItem
       v-for="todo in filteredTodos"
       :key="todo.id"
-      :title="todo.title"
-      :checked="todo.isDone"
-      @remove="handleRemoveTodo(todo.id)"
-      @check="handleChangeTodoStatus(todo.id, !todo.isDone)"
+      :todo="todo"
+      @remove="handleRemoveTodo"
+      @check="handleChangeTodoStatus"
     />
   </ul>
 
