@@ -62,21 +62,18 @@ export default {
   mounted() {
     this.getTodos();
   },
-  // TODO fix bugs with toggling and removing
+
   computed: {
     filteredTodos() {
-      const todos = localStorage.getItem("todos")
-        ? JSON.parse(localStorage.getItem("todos"))
-        : [];
       switch (this.activeFilter) {
         case "all":
-          return todos;
+          return this.todos;
         case "completed":
-          return todos.filter((todo) => todo.isDone);
+          return this.todos.filter((todo) => todo.isDone);
         case "left":
-          return todos.filter((todo) => !todo.isDone);
+          return this.todos.filter((todo) => !todo.isDone);
         default:
-          return todos;
+          return this.todos;
       }
     },
   },
