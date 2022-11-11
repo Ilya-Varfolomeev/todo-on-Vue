@@ -1,6 +1,7 @@
 <script>
 import TodoItem from "./TodoItem.vue";
 import TodoFilters from "./TodoFilters.vue";
+import { useTodoStore } from "../store/stores/todoStore";
 
 export default {
   components: { TodoItem, TodoFilters },
@@ -69,6 +70,8 @@ export default {
 
   mounted() {
     this.getTodos();
+    const store = useTodoStore();
+    console.log("store", store);
   },
 };
 </script>
