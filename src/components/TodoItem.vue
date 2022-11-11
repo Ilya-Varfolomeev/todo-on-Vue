@@ -10,7 +10,7 @@ export default {
   emits: ["remove", "check"],
   data() {
     return {
-      isChecked: this.checked,
+      isChecked: this.todo.isDone,
     };
   },
   watch: {
