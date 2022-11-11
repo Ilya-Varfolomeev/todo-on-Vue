@@ -7,17 +7,22 @@ import { useTodoStore } from "../store/stores/todoStore";
 export default {
   components: { TodoItem, TodoFilters, CustomInput },
 
+  setup() {
+    const todoStore = useTodoStore();
+
+    return { todoStore };
+  },
+
   data() {
     return {
       newTodoText: "",
-      todos: [],
-      activeFilter: "all",
+      todos: this.todoStore.todos,
     };
   },
 
   watch: {
     todos: function () {
-      localStorage.setItem("todos", JSON.stringify(this.todos));
+      this.todoStore.setTodos(this.todos);
     },
   },
 
@@ -50,25 +55,13 @@ export default {
     },
 
     handleSetActiveFilter(filter) {
-      this.activeFilter = filter;
+      this.todoStore.setActiveFilter(filter);
     },
-
-    getTodos() {
-      this.todos = localStorage.getItem("todos")
-        ? JSON.parse(localStorage.getItem("todos"))
-        : [];
-    },
-  },
-
-  mounted() {
-    this.getTodos();
-    const store = useTodoStore();
-    console.log("store", store);
   },
 
   computed: {
     filteredTodos() {
-      switch (this.activeFilter) {
+      switch (this.todoStore.activeFilter) {
         case "all":
           return this.todos;
         case "completed":
