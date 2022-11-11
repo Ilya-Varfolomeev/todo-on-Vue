@@ -1,24 +1,27 @@
 <script>
+import CustomInput from "./CustomInput.vue";
 import TodoItem from "./TodoItem.vue";
 import TodoFilters from "./TodoFilters.vue";
 import { useTodoStore } from "../store/stores/todoStore";
 
 export default {
-  components: { TodoItem, TodoFilters },
+  components: { TodoItem, TodoFilters, CustomInput },
 
   data() {
     return {
       newTodoText: "",
       todos: [],
+      activeFilter: "all",
     };
   },
 
-  methods: {
-    changeTodosArr(todosArr) {
-      this.todos = todosArr;
-      localStorage.setItem("todos", JSON.stringify(todosArr));
+  watch: {
+    todos: function () {
+      localStorage.setItem("todos", JSON.stringify(this.todos));
     },
+  },
 
+  methods: {
     handleAddTodo() {
       if (this.newTodoText.length < 1) {
         return;
@@ -29,36 +32,25 @@ export default {
         isDone: false,
         id: Math.floor(Math.random() * 100),
       };
-      const allTodos = [...this.todos, newTodo];
-      this.changeTodosArr(allTodos);
+      this.todos = [...this.todos, newTodo];
       this.newTodoText = "";
     },
 
     handleRemoveTodo(todoId) {
-      const filteredTodos = this.todos.filter((todo) => todo.id !== todoId);
-      this.changeTodosArr(filteredTodos);
+      this.todos = this.todos.filter((todo) => todo.id !== todoId);
     },
 
     handleChangeTodoStatus(todoId, value) {
-      const filteredTodos = this.todos.map((todo) => {
+      this.todos = this.todos.map((todo) => {
         if (todo.id === todoId) {
           return { ...todo, isDone: value };
         }
         return todo;
       });
-      this.changeTodosArr(filteredTodos);
     },
 
-    handleFilterTodos(filter) {
-      const todos = JSON.parse(localStorage.getItem("todos"));
-      switch (filter) {
-        case "all":
-          return (this.todos = todos);
-        case "completed":
-          return (this.todos = todos.filter((todo) => todo.isDone));
-        case "left":
-          return (this.todos = todos.filter((todo) => !todo.isDone));
-      }
+    handleSetActiveFilter(filter) {
+      this.activeFilter = filter;
     },
 
     getTodos() {
@@ -73,32 +65,45 @@ export default {
     const store = useTodoStore();
     console.log("store", store);
   },
+
+  computed: {
+    filteredTodos() {
+      switch (this.activeFilter) {
+        case "all":
+          return this.todos;
+        case "completed":
+          return this.todos.filter((todo) => todo.isDone);
+        case "left":
+          return this.todos.filter((todo) => !todo.isDone);
+        default:
+          return this.todos;
+      }
+    },
+  },
 };
 </script>
 
 <template>
   <form v-on:submit.prevent="handleAddTodo" class="todo-list__form">
-    <input
-      type="text"
-      placeholder="Enter a new todo"
+    <CustomInput
       v-model.trim="newTodoText"
       class="todo-list__add-input"
+      placeholder="Enter a new todo"
     />
     <button class="todo-list__button">Add</button>
   </form>
   <ul class="todo-list__todos-wrapper">
     <TodoItem
-      v-for="todo in todos"
+      v-for="todo in filteredTodos"
       :key="todo.id"
-      :title="todo.title"
-      :checked="todo.isDone"
-      @remove="handleRemoveTodo(todo.id)"
-      @check="handleChangeTodoStatus(todo.id, !todo.isDone)"
+      :todo="todo"
+      @remove="handleRemoveTodo"
+      @check="handleChangeTodoStatus"
     />
   </ul>
 
-  <div v-if="this.todos.length > 0" class="todo-list__buttons-wrapper">
-    <TodoFilters @filter="handleFilterTodos" />
+  <div class="todo-list__buttons-wrapper">
+    <TodoFilters @filter="handleSetActiveFilter" />
   </div>
 </template>
 

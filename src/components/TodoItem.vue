@@ -1,33 +1,36 @@
 <script>
 export default {
   props: {
-    title: {
-      type: String,
-      required: true,
-    },
-    checked: {
-      type: Boolean,
-      required: true,
+    todo: {
+      id: Number,
+      title: String,
+      isDone: Boolean,
     },
   },
   emits: ["remove", "check"],
   data() {
     return {
-      isChecked: this.checked,
+      isChecked: this.todo.isDone,
     };
+  },
+  watch: {
+    isChecked: function () {
+      this.$emit("check", this.todo.id, !this.todo.isDone);
+    },
   },
 };
 </script>
 
 <template>
   <li class="todo-item">
-    <p class="todo-item__title">{{ title }}</p>
-    <button @click="$emit('remove')" class="todo-item__remove-button">X</button>
+    <p class="todo-item__title">{{ todo.title }}</p>
+    <button @click="$emit('remove', todo.id)" class="todo-item__remove-button">
+      X
+    </button>
     <input
       type="checkbox"
       id="checkbox"
-      @click="$emit('check')"
-      v-model="this.isChecked"
+      v-model="isChecked"
       class="todo-item__checkbox"
     />
   </li>
