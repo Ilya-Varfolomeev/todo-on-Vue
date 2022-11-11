@@ -1,9 +1,22 @@
 import { defineStore } from "pinia";
 
 export const useTodoStore = defineStore("todo", {
-  state: () => {
-    return { todos: [], activeFilter: "all" };
+  state: () => ({
+    todos: localStorage.getItem("todos")
+      ? JSON.parse(localStorage.getItem("todos"))
+      : [],
+    activeFilter: "all",
+  }),
+  getters: {
+    getTodos: (state) => state.todos,
   },
-  getters: {},
-  actions: {},
+  actions: {
+    setTodos(value) {
+      (this.todos = value),
+        localStorage.setItem("todos", JSON.stringify(value));
+    },
+    setActiveFilter(value) {
+      this.activeFilter = value;
+    },
+  },
 });
