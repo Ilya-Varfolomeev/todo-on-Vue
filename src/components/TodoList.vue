@@ -10,6 +10,7 @@ export default {
     return {
       newTodoText: "",
       todos: [],
+      activeFilter: "all",
     };
   },
 
@@ -47,16 +48,27 @@ export default {
       });
     },
 
+    handleSetActiveFilter(filter) {
+      this.activeFilter = filter;
+    },
+
     getTodos() {
       this.todos = localStorage.getItem("todos")
         ? JSON.parse(localStorage.getItem("todos"))
         : [];
     },
+  },
 
-    handleFilterTodos(filter) {
-      const todos = JSON.parse(localStorage.getItem("todos"));
-      console.log("filter", filter);
-      switch (filter) {
+  mounted() {
+    this.getTodos();
+  },
+  // TODO fix bugs with toggling and removing
+  computed: {
+    filteredTodos() {
+      const todos = localStorage.getItem("todos")
+        ? JSON.parse(localStorage.getItem("todos"))
+        : [];
+      switch (this.activeFilter) {
         case "all":
           return todos;
         case "completed":
@@ -64,19 +76,8 @@ export default {
         case "left":
           return todos.filter((todo) => !todo.isDone);
         default:
-          return this.todos;
+          return todos;
       }
-    },
-  },
-
-  mounted() {
-    this.getTodos();
-  },
-  // TODO fix filtering todos
-  computed: {
-    filteredTodos() {
-      return this.todos;
-      // return this.handleFilterTodos();
     },
   },
 };
@@ -101,8 +102,8 @@ export default {
     />
   </ul>
 
-  <div v-if="filteredTodos.length > 0" class="todo-list__buttons-wrapper">
-    <TodoFilters @filter="handleFilterTodos" />
+  <div class="todo-list__buttons-wrapper">
+    <TodoFilters @filter="handleSetActiveFilter" />
   </div>
 </template>
 
