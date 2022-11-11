@@ -59,10 +59,6 @@ export default {
     },
   },
 
-  mounted() {
-    this.getTodos();
-  },
-
   computed: {
     filteredTodos() {
       switch (this.activeFilter) {
