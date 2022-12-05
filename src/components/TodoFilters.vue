@@ -1,17 +1,15 @@
-<script>
-export default {
-  emits: {
-    filter: {
-      type: Function,
-      required: true,
-    },
-  },
-  methods: {
-    handleFilter(settings) {
-      this.$emit("filter", settings);
-    },
-  },
+<script setup lang="ts">
+import { defineEmits } from "vue";
+
+type Emits = {
+  (e: "filter", settings: String): void;
 };
+
+const emit = defineEmits<Emits>();
+
+function handleFilter(settings: String) {
+  emit("filter", settings);
+}
 </script>
 
 <template>

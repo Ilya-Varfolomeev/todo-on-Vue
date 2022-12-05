@@ -1,36 +1,39 @@
-<script>
-export default {
-  props: {
-    todo: {
-      id: Number,
-      title: String,
-      isDone: Boolean,
-    },
-  },
-  emits: ["remove", "check"],
-  data() {
-    return {
-      isChecked: this.todo.isDone,
-    };
-  },
-  watch: {
-    isChecked: function () {
-      this.$emit("check", this.todo.id, !this.todo.isDone);
-    },
-  },
+<script setup lang="ts">
+import { defineProps, defineEmits, ref, watch, InputHTMLAttributes } from "vue";
+
+type Props = {
+  todo: {
+    id: Number;
+    title: String;
+    isDone: Boolean;
+  };
 };
+
+type Emits = {
+  (e: "check", todoId: Number, value: Boolean): void;
+  (e: "remove", todoId: Number): void;
+};
+
+const props = defineProps<Props>();
+const emit = defineEmits<Emits>();
+
+const isChecked = ref<Boolean>(props.todo.isDone);
+
+watch(isChecked, () => {
+  emit("check", props.todo.id, !props.todo.isDone);
+});
 </script>
 
 <template>
   <li class="todo-item">
     <p class="todo-item__title">{{ todo.title }}</p>
-    <button @click="$emit('remove', todo.id)" class="todo-item__remove-button">
+    <button @click="emit('remove', todo.id)" class="todo-item__remove-button">
       X
     </button>
     <input
       type="checkbox"
       id="checkbox"
-      v-model="isChecked"
+      v-model="(isChecked as any)"
       class="todo-item__checkbox"
     />
   </li>

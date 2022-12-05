@@ -1,79 +1,61 @@
-<script>
+<script setup>
 import CustomInput from "./CustomInput.vue";
 import TodoItem from "./TodoItem.vue";
 import TodoFilters from "./TodoFilters.vue";
 import { useTodoStore } from "../store/stores/todoStore";
+import { ref, computed, watchEffect } from "vue";
 
-export default {
-  components: { TodoItem, TodoFilters, CustomInput },
+const todoStore = useTodoStore();
+const newTodoText = ref("");
+const todos = ref([todoStore.todos]);
 
-  setup() {
-    const todoStore = useTodoStore();
+watchEffect(() => {
+  todoStore.setTodos(todos.value);
+});
 
-    return { todoStore };
-  },
+function handleAddTodo() {
+  if (newTodoText.value.length < 1) {
+    return;
+  }
 
-  data() {
-    return {
-      newTodoText: "",
-      todos: this.todoStore.todos,
-    };
-  },
+  const newTodo = {
+    title: newTodoText.value,
+    isDone: false,
+    id: Math.floor(Math.random() * 100),
+  };
+  todos.value = [...todos.value, newTodo];
+  newTodoText.value = "";
+}
 
-  watch: {
-    todos: function () {
-      this.todoStore.setTodos(this.todos);
-    },
-  },
+function handleRemoveTodo(todoId) {
+  todos.value = todos.value.filter((todo) => todo.id !== todoId);
+}
 
-  methods: {
-    handleAddTodo() {
-      if (this.newTodoText.length < 1) {
-        return;
-      }
+function handleChangeTodoStatus(todoId, value) {
+  todos.value = todos.value.map((todo) => {
+    if (todo.id === todoId) {
+      return { ...todo, isDone: value };
+    }
+    return todo;
+  });
+}
 
-      const newTodo = {
-        title: this.newTodoText,
-        isDone: false,
-        id: Math.floor(Math.random() * 100),
-      };
-      this.todos = [...this.todos, newTodo];
-      this.newTodoText = "";
-    },
+function handleSetActiveFilter(filter) {
+  todoStore.setActiveFilter(filter);
+}
 
-    handleRemoveTodo(todoId) {
-      this.todos = this.todos.filter((todo) => todo.id !== todoId);
-    },
-
-    handleChangeTodoStatus(todoId, value) {
-      this.todos = this.todos.map((todo) => {
-        if (todo.id === todoId) {
-          return { ...todo, isDone: value };
-        }
-        return todo;
-      });
-    },
-
-    handleSetActiveFilter(filter) {
-      this.todoStore.setActiveFilter(filter);
-    },
-  },
-
-  computed: {
-    filteredTodos() {
-      switch (this.todoStore.activeFilter) {
-        case "all":
-          return this.todos;
-        case "completed":
-          return this.todos.filter((todo) => todo.isDone);
-        case "left":
-          return this.todos.filter((todo) => !todo.isDone);
-        default:
-          return this.todos;
-      }
-    },
-  },
-};
+const filteredTodos = computed(() => {
+  switch (todoStore.activeFilter) {
+    case "all":
+      return todos.value;
+    case "completed":
+      return todos.value.filter((todo) => todo.isDone);
+    case "left":
+      return todos.value.filter((todo) => !todo.isDone);
+    default:
+      return todos.value;
+  }
+});
 </script>
 
 <template>
